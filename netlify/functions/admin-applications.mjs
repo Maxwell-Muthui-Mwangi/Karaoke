@@ -23,10 +23,8 @@ export default async function handler(request){
  if(!body||! /^[0-9a-f-]{36}$/i.test(body.id||'')||!allowed.has(body.status))return json({error:'Invalid application update'},400);
  const {data:before,error:lookupError}=await db.from('registrations').select('id,status').eq('id',body.id).maybeSingle();
  if(lookupError||!before)return json({error:'Application not found'},404);
- const {data:updated,error}=await db.from('registrations').update({status:body.status}).eq('id',body.id).eq('status',before.status).select('id,status').maybeSingle();
- if(error)return json({error:'Unable to update application'},503);
- if(!updated)return json({error:'Application changed; refresh and retry'},409);
- const {error:auditError}=await db.from('cms_application_audit').insert({application_id:body.id,actor_id:user.id,previous_status:before.status,new_status:body.status});
- if(auditError){console.error('CMS audit insertion failed',auditError.code);return json({error:'Status saved but audit recording failed. Contact administrator.'},503)}
- return json({application:updated});
+ const actorDb=createClient(url,process.env.SUPABASE_ANON_KEY||key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:bearer}}});
+ const {data:updated,error}=await actorDb.rpc('cms_change_application_status',{p_id:body.id,p_status:body.status,p_expected_status:before.status});
+ if(error){console.error('Atomic CMS status update failed',error.code);return json({error:error.code==='40001'?'Application changed; refresh and retry':'Unable to update application and audit record'},error.code==='40001'?409:503)}
+ return json({application:Array.isArray(updated)?updated[0]:updated});
 }
