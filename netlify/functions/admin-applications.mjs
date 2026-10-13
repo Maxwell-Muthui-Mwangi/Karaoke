@@ -27,7 +27,9 @@ export default async function handler(request){
  }
  if(!['admin','editor'].includes(member.role))return json({error:'Read-only role'},403);
  if(Number(request.headers.get('content-length'))>2048)return json({error:'Request too large'},413);
- let body;try{const raw=await request.text();if(raw.length>2048)return json({error:'Request too large'},413);body=JSON.parse(raw)}catch{return json({error:'Invalid JSON'},400)}
+ let raw;try{raw=await request.text()}catch{return json({error:'Unable to read request'},400)}
+ if(raw.length>2048)return json({error:'Request too large'},413);
+ let body;try{body=JSON.parse(raw)}catch{return json({error:'Invalid JSON'},400)}
  if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.id!=='string'||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.id)||!allowed.has(body.status))return json({error:'Invalid application update'},400);
  const {data:before,error:lookupError}=await db.from('registrations').select('id,status').eq('id',body.id).maybeSingle();
  if(lookupError||!before)return json({error:'Application not found'},404);
