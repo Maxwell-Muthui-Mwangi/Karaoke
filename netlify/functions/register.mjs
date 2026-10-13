@@ -2,6 +2,18 @@ import {createClient} from '@supabase/supabase-js';
 import {randomUUID} from 'node:crypto';
 const categories=new Set(['Singing / Karaoke','Rap / Freestyle','Dance','Spoken Word','DJ / Music Production','Instruments','Comedy','Other']);
 const affiliations=new Set(['Student','Staff','Alumni','Guest']);
+async function sendReceipt({email,name,reference,kind}) {
+ const key=process.env.RESEND_API_KEY;
+ if(!key)return {sent:false,reason:'not_configured'};
+ const safe=s=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const text='Hello '+name+',\\n\\nYour Zetech Karaoke '+(kind==='performer'?'performance application':'club registration')+' has been received.\\nRegistration reference: '+reference+'\\nStatus: Pending review. This is proof of submission, not confirmation of a performance slot.\\n\\nEvery Friday, 5–8 PM, Ruiru Campus, 3rd Floor Auditorium.\\nFor help: 0794 425 022.\\n\\nZetech Karaoke';
+ const payload={from:'Zetech Karaoke <Karaoke@ballershopke.ltd>',to:[email],subject:'Zetech Karaoke registration received — '+reference,text,html:'<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#002147"><h1>Zetech Karaoke</h1><p>Hello '+safe(name)+',</p><p>We received your '+(kind==='performer'?'performance application':'club registration')+'. Keep this email as proof of submission.</p><p style="font-size:20px"><strong>Reference: '+safe(reference)+'</strong></p><p>Status: <strong>Pending review</strong></p><p>This receipt does not guarantee a performance slot.</p><p>Every Friday, 5–8 PM · Ruiru Campus, 3rd Floor Auditorium</p><p>Questions? 0794 425 022</p></div>'};
+ try{
+  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','Idempotency-Key':'karaoke-receipt-'+reference},body:JSON.stringify(payload),signal:AbortSignal.timeout(8000)});
+  if(!response.ok){console.error('Resend receipt failed',response.status);return {sent:false,reason:'provider_error'}}
+  return {sent:true};
+ }catch(e){console.error('Resend receipt unavailable',e?.name);return {sent:false,reason:'network_error'}}
+}
 const reply=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const field=(x,max)=>typeof x==='string'&&x.length<=max?x.trim():null;
 export default async function handler(request){
@@ -21,7 +33,7 @@ export default async function handler(request){
  try{
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
  const {error}=await db.from('registrations').insert({reference,request_id,kind,full_name,email,phone,affiliation,department,category:kind==='performer'?category:null,stage_name:kind==='performer'?stage_name:null,act_description:kind==='performer'?act_description:null,consent_at:new Date().toISOString()});
- if(error?.code==='23505'){const {data:existing}=await db.from('registrations').select('reference,email').eq('request_id',request_id).maybeSingle();if(existing&&existing.email===email)return reply({reference:existing.reference},200);return reply({error:'A club membership may already exist for this email. Contact organizers to confirm.'},409)}if(error){console.error('Registration persistence failure',error.code);return reply({error:'Unable to confirm the save. Please contact organizers before resubmitting.'},503)}
- return reply({reference},201);
+ if(error?.code==='23505'){const {data:existing}=await db.from('registrations').select('reference,email').eq('request_id',request_id).maybeSingle();if(existing&&existing.email===email)return reply({reference:existing.reference,email_status:'previously_submitted'},200);return reply({error:'A club membership may already exist for this email. Contact organizers to confirm.'},409)}if(error){console.error('Registration persistence failure',error.code);return reply({error:'Unable to confirm the save. Please contact organizers before resubmitting.'},503)}
+ const receipt=await sendReceipt({email,name:full_name,reference,kind});return reply({reference,email_status:receipt.sent?'sent':'pending'},201);
  }catch(e){console.error('Registration service exception',e?.name);return reply({error:'Unable to confirm the save. Please contact organizers before resubmitting.'},503)}
 }
