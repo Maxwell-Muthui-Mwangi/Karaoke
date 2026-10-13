@@ -222,3 +222,6 @@ header .karaoke-brand-wordmark small{font-size:clamp(7px,.75vw,10px);font-weight
 
 /* Consistent Montserrat typography on all public pages and controls. */
 html,body,#root,button,input,select,textarea{font-family:'Montserrat',sans-serif}
+
+/* Keep the anti-spam honeypot out of visual layout and keyboard navigation. */
+.registration-trap{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
