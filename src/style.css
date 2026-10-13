@@ -210,3 +210,12 @@ em{color:var(--zu-coral)}
 @media(max-width:800px){.site-topbar nav.topbar-links a:not(.pill){display:inline-flex!important;white-space:nowrap}}
 
 .event-share{display:grid;gap:10px;margin-top:20px;text-align:left}.event-share h3{font-size:20px;margin:0;color:#002147}.event-share p{margin:0;color:#002147}.event-share a,.event-share button{display:block;width:100%;padding:12px;border-radius:7px;border:2px solid #002147;background:#D6C93D;color:#002147;font:700 14px system-ui,sans-serif;text-align:center;text-decoration:none;cursor:pointer}.event-share a:hover,.event-share button:hover{background:#3D8CD6}.event-share :focus-visible{outline:3px solid #A01705;outline-offset:2px}
+
+/* Official Zetech University mark displayed unchanged before Karaoke wordmark */
+header .university-karaoke-brand{display:inline-flex;align-items:center;gap:clamp(9px,1.4vw,20px);max-width:min(55%,460px);text-decoration:none;min-width:0;justify-content:flex-start}
+header .university-logo{display:block;width:clamp(74px,8.6vw,112px);height:auto;max-height:76px;object-fit:contain;flex:none}
+header .karaoke-brand-wordmark{display:flex;flex-direction:column;gap:4px;min-width:0;border-left:2px solid #002147;padding-left:clamp(9px,1.4vw,18px);color:#002147;letter-spacing:0}
+header .karaoke-brand-wordmark strong{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,2.8vw,37px);font-weight:800;line-height:1;letter-spacing:.04em}
+header .karaoke-brand-wordmark small{font-size:clamp(7px,.75vw,10px);font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#1767a8}
+@media(max-width:800px){header .university-karaoke-brand{max-width:65%;gap:8px}header .university-logo{width:clamp(55px,14vw,78px);max-height:60px}header .karaoke-brand-wordmark{padding-left:8px}header .karaoke-brand-wordmark strong{font-size:clamp(16px,4vw,24px)}header .karaoke-brand-wordmark small{font-size:7px;white-space:normal}}
+@media(max-width:390px){header .university-karaoke-brand{max-width:60%}header .university-logo{width:52px}header .karaoke-brand-wordmark strong{font-size:15px}header .karaoke-brand-wordmark small{font-size:6px}}
