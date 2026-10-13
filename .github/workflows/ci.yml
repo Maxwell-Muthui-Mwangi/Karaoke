@@ -1,0 +1,29 @@
+name: Build and source checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate Netlify function syntax
+        run: |
+          node --check netlify/functions/register.mjs
+          node --check netlify/functions/admin-applications.mjs
+      - name: Build production site
+        run: npm run build
+      - name: Check build output
+        run: test -s dist/index.html
