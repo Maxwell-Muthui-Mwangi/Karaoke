@@ -195,3 +195,13 @@ em{color:var(--zu-coral)}
 .site-topbar a:focus-visible{outline:2px solid #D6C93D;outline-offset:4px}
 .site-topbar .topbar-links a:not(:last-child){padding-right:clamp(10px,2vw,24px);border-right:1px solid #8C92AC}
 @media(max-width:760px){.site-topbar-inner{flex-direction:column;align-items:center;gap:9px;padding:10px 12px}.site-topbar .topbar-contact,.site-topbar .topbar-links{justify-content:center;gap:10px 14px}.site-topbar a{font-size:11px}.site-topbar .topbar-links a:not(:last-child){padding-right:14px}}
+
+/* Audit remediation: keep primary navigation accessible on narrow viewports */
+@media(max-width:800px){
+ header{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+ header .logo{display:flex;justify-content:center}
+ header nav[aria-label="Main navigation"]{display:flex;width:100%;overflow-x:auto;overscroll-behavior-x:contain;gap:8px;justify-content:flex-start;padding:5px 0 10px;scrollbar-width:thin}
+ header nav[aria-label="Main navigation"] a,header nav[aria-label="Main navigation"] a:not(.pill){display:inline-flex!important;white-space:nowrap;flex-shrink:0;font-size:12px;padding:10px 12px}
+ header nav[aria-label="Main navigation"] a.pill{border-radius:20px}
+}
+@media(min-width:801px) and (max-width:1080px){header nav[aria-label="Main navigation"]{gap:12px}header nav[aria-label="Main navigation"] a{font-size:12px}}
