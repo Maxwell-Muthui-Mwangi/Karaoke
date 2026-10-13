@@ -219,3 +219,71 @@ header .karaoke-brand-wordmark strong{font-family:'Space Grotesk',sans-serif;fon
 header .karaoke-brand-wordmark small{font-size:clamp(7px,.75vw,10px);font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#1767a8}
 @media(max-width:800px){header .university-karaoke-brand{max-width:65%;gap:8px}header .university-logo{width:clamp(55px,14vw,78px);max-height:60px}header .karaoke-brand-wordmark{padding-left:8px}header .karaoke-brand-wordmark strong{font-size:clamp(16px,4vw,24px)}header .karaoke-brand-wordmark small{font-size:7px;white-space:normal}}
 @media(max-width:390px){header .university-karaoke-brand{max-width:60%}header .university-logo{width:52px}header .karaoke-brand-wordmark strong{font-size:15px}header .karaoke-brand-wordmark small{font-size:6px}}
+
+/* Responsive hardening: 320px phones through wide desktop; retain existing branding */
+html,body,#root{max-width:100%;min-width:0}
+body{overflow-x:clip}
+img,video,svg,iframe{max-width:100%}
+img{height:auto}
+main,section,header,footer{min-width:0}
+section>*{min-width:0}
+header .logo{min-width:0;flex:0 1 auto}
+header .brand-logo{display:block;max-width:100%;height:auto;max-height:none!important;object-fit:contain}
+header nav[aria-label="Main navigation"]{min-width:0}
+header nav[aria-label="Main navigation"] a{white-space:nowrap}
+.hero h1,section h2,section h3{overflow-wrap:break-word}
+.hero h1{font-size:clamp(2.8rem,10vw,10.75rem)}
+section h2{font-size:clamp(2rem,5.6vw,5.125rem)}
+.cards,.visual-grid,.signup,.reel-feature,.patron-playlist{min-width:0}
+.cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,215px),1fr))}
+.tile,.cms-item{min-width:0}
+.signup{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.signup>*,.reel-feature>*,.patron-playlist>*{min-width:0}
+.qr{width:min(100%,360px);max-width:100%;min-width:0}
+.qr svg{max-width:100%;height:auto}
+.registration-form,.registration-form label,.registration-form input,.registration-form select,.registration-form textarea{min-width:0;max-width:100%}
+.registration-form input,.registration-form select,.registration-form textarea{width:100%;font-size:16px}
+.registration-form .consent input{width:auto}
+.patron-video iframe,.reel-feature iframe{max-width:100%}
+.site-topbar-inner{min-width:0}
+@media(max-width:1050px){
+ header{gap:12px;flex-wrap:wrap;justify-content:center}
+ header .logo{max-width:100%;width:min(100%,490px);justify-content:center}
+ header .brand-logo{width:min(100%,490px)!important;max-height:none!important}
+ header nav[aria-label="Main navigation"]{width:100%;display:flex;overflow-x:auto;overscroll-behavior-inline:contain;justify-content:flex-start;gap:8px;padding:7px 2px 12px;scrollbar-width:thin}
+ header nav[aria-label="Main navigation"] a,header nav[aria-label="Main navigation"] a:not(.pill){display:inline-flex!important;align-items:center;flex:0 0 auto;white-space:nowrap;padding:10px 12px;font-size:13px}
+}
+@media(max-width:800px){
+ .signup{grid-template-columns:minmax(0,1fr)}
+ .qr{justify-self:center}
+ .site-topbar-inner{padding-inline:12px}
+ section{padding-inline:clamp(14px,5vw,38px)}
+}
+@media(max-width:480px){
+ header{padding:10px 12px!important}
+ header .logo{max-width:100%;width:100%}
+ header .brand-logo{width:min(100%,400px)!important;max-height:none!important}
+ header nav[aria-label="Main navigation"]{gap:4px}
+ header nav[aria-label="Main navigation"] a,header nav[aria-label="Main navigation"] a:not(.pill){font-size:12px;padding:10px}
+ .site-topbar .topbar-contact,.site-topbar .topbar-links{gap:8px;justify-content:center}
+ .site-topbar a{font-size:11px}
+ section{padding:58px 16px}
+ .hero{padding-top:65px;min-height:0}
+ .hero h1{font-size:clamp(2.65rem,12vw,4.2rem);letter-spacing:-.06em}
+ section h2{font-size:clamp(1.95rem,9vw,3rem)}
+ .lead{font-size:17px}
+ .actions{gap:10px;margin:24px 0 36px}
+ .actions .btn{max-width:100%;justify-content:center}
+ .eventbar{gap:12px}
+ .tile{padding:20px;min-height:0}
+ .qr{padding:16px}
+ .playlist-share-actions a{width:100%}
+}
+@media(max-width:350px){
+ section{padding-inline:12px}
+ header{padding-inline:8px!important}
+ .hero h1{font-size:2.5rem}
+ .site-topbar-inner{padding-inline:8px}
+ .qr{padding:12px}
+}
+@media(hover:none){.tile:hover,.playlist-tab:hover,.playlist-share-actions a:hover{transform:none}}
