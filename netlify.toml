@@ -10,6 +10,11 @@ to = "/.netlify/functions/register"
 status = 200
 force = true
 [[redirects]]
+from = "/api/admin-applications"
+to = "/.netlify/functions/admin-applications"
+status = 200
+force = true
+[[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
