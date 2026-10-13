@@ -20,3 +20,11 @@ No public SELECT access to registrations. Server validates bearer JWT against Su
 - Set up rate limiting and monitoring before publicly promoting the registration form.
 
 **Current verification status:** Source changes are committed; Netlify deployment, database migrations, and end-to-end testing are not yet confirmed.
+
+## Registration email receipts (Resend)
+1. Verify the sending domain ballershopke.ltd in Resend and publish the DNS records Resend supplies (SPF/DKIM and recommended DMARC). Do not assume the domain is verified until Resend confirms.
+2. Add RESEND_API_KEY as a **secret server-side** Netlify environment variable. Never prefix it with VITE_ or commit the key.
+3. The sender is Karaoke@ballershopke.ltd. Receipts are attempted after successful database persistence and use the registration reference as the provider idempotency key.
+4. A registration may be saved even if email delivery is pending or unsuccessful. Check Resend logs and configure delivery webhooks/queues before treating receipts as guaranteed. Do not resend blindly.
+5. Test with an authorized test inbox: registration receipt, sender authentication, spam placement, bounce handling, and repeat-submission behavior.
+6. The same sender may later support approved/rejected/waitlisted notices, event reminders, and staff alerts, but those workflows are **not yet implemented**.
