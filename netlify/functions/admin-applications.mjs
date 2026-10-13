@@ -16,7 +16,14 @@ export default async function handler(request){
  if(request.method==='GET'){
   const parsed=new URL(request.url);const page=Number(parsed.searchParams.get('page')||0);if(!Number.isSafeInteger(page)||page<0||page>100000)return json({error:'Invalid page'},400);
   const size=100;const {data,error,count}=await db.from('registrations').select('id,reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,created_at',{count:'exact'}).order('created_at',{ascending:false}).order('id',{ascending:false}).range(page*size,page*size+size-1);
-  return error?json({error:'Unable to retrieve applications'},503):json({role:member.role,applications:data,total:count,page,page_size:size});
+  if(error)return json({error:'Unable to retrieve applications'},503);
+  const [pending,approved,performers]=await Promise.all([
+   db.from('registrations').select('id',{count:'exact',head:true}).eq('status','pending'),
+   db.from('registrations').select('id',{count:'exact',head:true}).eq('status','approved'),
+   db.from('registrations').select('id',{count:'exact',head:true}).eq('kind','performer')
+  ]);
+  if(pending.error||approved.error||performers.error)return json({error:'Unable to retrieve application statistics'},503);
+  return json({role:member.role,applications:data,total:count,page,page_size:size,stats:{pending:pending.count,approved:approved.count,performers:performers.count}});
  }
  if(!['admin','editor'].includes(member.role))return json({error:'Read-only role'},403);
  if(Number(request.headers.get('content-length'))>2048)return json({error:'Request too large'},413);
