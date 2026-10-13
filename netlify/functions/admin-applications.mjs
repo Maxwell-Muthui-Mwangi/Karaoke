@@ -1,0 +1,32 @@
+import {createClient} from '@supabase/supabase-js';
+const json=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+const allowed=new Set(['pending','approved','waitlisted','rejected']);
+export default async function handler(request){
+ if(!['GET','PATCH'].includes(request.method))return json({error:'Method not allowed'},405);
+ const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
+ if(!url||!key)return json({error:'CMS service is not configured'},503);
+ const bearer=request.headers.get('authorization')||'';
+ if(!/^Bearer\s+\S+$/.test(bearer))return json({error:'Authentication required'},401);
+ const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
+ const {data:{user},error:authError}=await db.auth.getUser(bearer.replace(/^Bearer\s+/,''));
+ if(authError||!user)return json({error:'Invalid session'},401);
+ const {data:member,error:roleError}=await db.from('cms_staff').select('role,active').eq('user_id',user.id).maybeSingle();
+ if(roleError)return json({error:'CMS staff table not configured'},503);
+ if(!member?.active)return json({error:'Not authorized for CMS'},403);
+ if(request.method==='GET'){
+  const {data,error}=await db.from('registrations').select('id,reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,created_at').order('created_at',{ascending:false}).limit(200);
+  return error?json({error:'Unable to retrieve applications'},503):json({role:member.role,applications:data});
+ }
+ if(!['admin','editor'].includes(member.role))return json({error:'Read-only role'},403);
+ if(Number(request.headers.get('content-length'))>2048)return json({error:'Request too large'},413);
+ let body;try{body=await request.json()}catch{return json({error:'Invalid JSON'},400)}
+ if(!body||! /^[0-9a-f-]{36}$/i.test(body.id||'')||!allowed.has(body.status))return json({error:'Invalid application update'},400);
+ const {data:before,error:lookupError}=await db.from('registrations').select('id,status').eq('id',body.id).maybeSingle();
+ if(lookupError||!before)return json({error:'Application not found'},404);
+ const {data:updated,error}=await db.from('registrations').update({status:body.status}).eq('id',body.id).eq('status',before.status).select('id,status').maybeSingle();
+ if(error)return json({error:'Unable to update application'},503);
+ if(!updated)return json({error:'Application changed; refresh and retry'},409);
+ const {error:auditError}=await db.from('cms_application_audit').insert({application_id:body.id,actor_id:user.id,previous_status:before.status,new_status:body.status});
+ if(auditError){console.error('CMS audit insertion failed',auditError.code);return json({error:'Status saved but audit recording failed. Contact administrator.'},503)}
+ return json({application:updated});
+}
