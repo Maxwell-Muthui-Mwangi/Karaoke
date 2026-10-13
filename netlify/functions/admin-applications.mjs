@@ -14,8 +14,9 @@ export default async function handler(request){
  if(roleError)return json({error:'CMS staff table not configured'},503);
  if(!member?.active)return json({error:'Not authorized for CMS'},403);
  if(request.method==='GET'){
-  const {data,error}=await db.from('registrations').select('id,reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,created_at').order('created_at',{ascending:false}).limit(200);
-  return error?json({error:'Unable to retrieve applications'},503):json({role:member.role,applications:data});
+  const parsed=new URL(request.url);const page=Number(parsed.searchParams.get('page')||0);if(!Number.isSafeInteger(page)||page<0||page>100000)return json({error:'Invalid page'},400);
+  const size=100;const {data,error,count}=await db.from('registrations').select('id,reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,created_at',{count:'exact'}).order('created_at',{ascending:false}).order('id',{ascending:false}).range(page*size,page*size+size-1);
+  return error?json({error:'Unable to retrieve applications'},503):json({role:member.role,applications:data,total:count,page,page_size:size});
  }
  if(!['admin','editor'].includes(member.role))return json({error:'Read-only role'},403);
  if(Number(request.headers.get('content-length'))>2048)return json({error:'Request too large'},413);
