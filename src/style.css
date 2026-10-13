@@ -185,3 +185,13 @@ em{color:var(--zu-coral)}
 .playlist-share-actions a:hover{background:#3D8CD6;transform:translateY(-2px)}
 .playlist-share-actions a:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.playlist-share-actions a:hover{transform:none}}
+
+/* University and partner links top bar */
+.site-topbar{background:#000000;color:#fff;border-bottom:2px solid #D6C93D;position:relative;z-index:51}
+.site-topbar-inner{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 6%;max-width:1800px;margin:0 auto}
+.site-topbar .topbar-contact,.site-topbar .topbar-links{display:flex;align-items:center;flex-wrap:wrap;gap:clamp(10px,2vw,24px)}
+.site-topbar a{color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;transition:color .2s ease}
+.site-topbar a:hover{color:#D6C93D}
+.site-topbar a:focus-visible{outline:2px solid #D6C93D;outline-offset:4px}
+.site-topbar .topbar-links a:not(:last-child){padding-right:clamp(10px,2vw,24px);border-right:1px solid #8C92AC}
+@media(max-width:760px){.site-topbar-inner{flex-direction:column;align-items:center;gap:9px;padding:10px 12px}.site-topbar .topbar-contact,.site-topbar .topbar-links{justify-content:center;gap:10px 14px}.site-topbar a{font-size:11px}.site-topbar .topbar-links a:not(:last-child){padding-right:14px}}
