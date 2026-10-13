@@ -130,3 +130,49 @@ header nav a:not(.pill):hover::after,header nav a:not(.pill):focus-visible::afte
 .instagram-loading a{color:#2468a8;font-weight:700;text-decoration:underline}
 .instagram-credit{font-size:13px;color:#667085}
 @media(max-width:760px){.reel-frame.instagram-official{width:100%;min-height:420px;padding:4px}}
+
+/* Official Zetech University visual identity — approved palette only.
+   Blue #002147, Black #000000, Cool Gray #8C92AC, Sky Blue #3D8CD6,
+   Olive #8A8542, Brown #543D21, Sienna #A01705, Umber #9E7369,
+   Coral #E63C64, Mustard #D6C93D. White is used for legibility. */
+:root{--zu-blue:#002147;--zu-black:#000000;--zu-gray:#8C92AC;--zu-sky:#3D8CD6;--zu-olive:#8A8542;--zu-brown:#543D21;--zu-sienna:#A01705;--zu-umber:#9E7369;--zu-coral:#E63C64;--zu-mustard:#D6C93D;--zu-white:#fff;color:var(--zu-white);background:var(--zu-blue)}
+header{background:var(--zu-blue);border-bottom:3px solid var(--zu-sky)}
+header nav a:hover{color:var(--zu-mustard)}
+header nav a:not(.pill)::after{background:var(--zu-coral)}
+.pill{border-color:var(--zu-mustard)}
+.hero{background:radial-gradient(ellipse at 85% 25%,#E63C6450,transparent 42%),radial-gradient(ellipse at 15% 80%,#3D8CD655,transparent 40%),var(--zu-blue)}
+.hero em{color:var(--zu-mustard)}
+.hero .marquee{background:linear-gradient(90deg,var(--zu-coral),var(--zu-sienna),var(--zu-umber));color:var(--zu-white);background-size:200% 100%;animation:kzuShimmer 15s linear infinite}
+.btn{background:var(--zu-mustard);color:var(--zu-blue)}
+.btn:hover{background:var(--zu-sky);color:var(--zu-blue)}
+.btn.ghost:hover{background:var(--zu-coral);color:var(--zu-white)}
+.eyebrow{color:var(--zu-sky)}
+em{color:var(--zu-coral)}
+#about{background:linear-gradient(135deg,var(--zu-blue),var(--zu-brown))}
+#talent{background:linear-gradient(145deg,var(--zu-blue),var(--zu-olive))}
+#journey{background:linear-gradient(140deg,var(--zu-blue),var(--zu-umber))}
+#patron{background:linear-gradient(155deg,var(--zu-blue),var(--zu-brown))}
+#join{background:linear-gradient(135deg,var(--zu-blue),var(--zu-sienna))}
+#perform{background:linear-gradient(135deg,var(--zu-blue),var(--zu-olive))}
+.tile{border-color:var(--zu-gray);background:var(--zu-blue)}
+.tile:nth-child(5n+1){border-top:5px solid var(--zu-coral)}
+.tile:nth-child(5n+2){border-top:5px solid var(--zu-mustard)}
+.tile:nth-child(5n+3){border-top:5px solid var(--zu-sky)}
+.tile:nth-child(5n+4){border-top:5px solid var(--zu-olive)}
+.tile:nth-child(5n){border-top:5px solid var(--zu-umber)}
+.tile:hover{border-color:var(--zu-mustard)}
+.reel-feature{background:radial-gradient(circle at 85% 20%,#E63C6450,transparent 45%),linear-gradient(130deg,var(--zu-blue),var(--zu-umber))}
+.reel-feature .reel-copy p:not(.eyebrow){color:var(--zu-white)}
+.reel-frame.instagram-official{background:var(--zu-white);border-color:var(--zu-mustard)}
+.instagram-loading{color:var(--zu-blue)}
+.instagram-loading a{color:var(--zu-blue)}
+.instagram-credit{color:var(--zu-gray)}
+.patron-playlist{background:linear-gradient(125deg,var(--zu-blue),var(--zu-umber));border:2px solid var(--zu-mustard)}
+.patron-playlist-intro p:not(.eyebrow){color:var(--zu-white)}
+.patron-video{border:3px solid var(--zu-mustard);background:var(--zu-black)}
+.playlist-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.playlist-tab{appearance:none;border:2px solid var(--zu-sky);background:var(--zu-blue);color:var(--zu-white);border-radius:999px;padding:12px 18px;cursor:pointer;font:inherit;font-weight:700;transition:background .2s,transform .2s}
+.playlist-tab:hover{background:var(--zu-sienna);transform:translateY(-2px)}
+.playlist-tab.active{background:var(--zu-mustard);border-color:var(--zu-mustard);color:var(--zu-blue)}
+.playlist-tab:focus-visible{outline:3px solid var(--zu-white);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.playlist-tab:hover{transform:none}}
