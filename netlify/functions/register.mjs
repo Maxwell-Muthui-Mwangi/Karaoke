@@ -26,6 +26,7 @@ export default async function handler(request){
  if(bodyText.length>10000)return reply({error:'Request too large'},413);
  let data;try{data=JSON.parse(bodyText)}catch{return reply({error:'Invalid JSON'},400)}
  if(!data||typeof data!=='object'||Array.isArray(data))return reply({error:'Invalid registration payload'},400);
+ if(typeof data.website==='string'&&data.website.trim())return reply({error:'Unable to process this submission'},400);
  const kind=field(data.kind,20),full_name=field(data.full_name,120),email=field(data.email,254)?.toLowerCase(),phone=field(data.phone,20),affiliation=field(data.affiliation,20),department=field(data.department??'',120),category=field(data.category??'',80),stage_name=field(data.stage_name??'',100),act_description=field(data.act_description??'',1000);
  if(!['member','performer'].includes(kind)||!full_name||full_name.length<2||!email||!/^\S+@\S+\.\S+$/.test(email)||!phone||!/^\+?[0-9 ]{9,17}$/.test(phone)||!affiliations.has(affiliation)||department===null||category===null||stage_name===null||act_description===null||data.consent!=='yes'||(kind==='performer'&&(!categories.has(category)||act_description.length<10)))return reply({error:'Check the required registration fields.'},400);
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
