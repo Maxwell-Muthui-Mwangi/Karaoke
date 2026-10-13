@@ -205,3 +205,6 @@ em{color:var(--zu-coral)}
  header nav[aria-label="Main navigation"] a.pill{border-radius:20px}
 }
 @media(min-width:801px) and (max-width:1080px){header nav[aria-label="Main navigation"]{gap:12px}header nav[aria-label="Main navigation"] a{font-size:12px}}
+
+/* Restore external topbar navigation affected by the legacy global mobile nav rule */
+@media(max-width:800px){.site-topbar nav.topbar-links a:not(.pill){display:inline-flex!important;white-space:nowrap}}
