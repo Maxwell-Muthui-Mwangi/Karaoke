@@ -6,3 +6,5 @@
 
 /* Match the public site's Montserrat typography throughout the CMS. */
 .cms,.cms button,.cms input,.cms select,.cms textarea{font-family:'Montserrat',sans-serif}
+
+.cms-pagination{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:24px 0}.cms-pagination span{font-weight:700}.cms-pagination button{min-width:115px}
