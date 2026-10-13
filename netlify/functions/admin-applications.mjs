@@ -31,8 +31,9 @@ export default async function handler(request){
  if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.id!=='string'||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.id)||!allowed.has(body.status))return json({error:'Invalid application update'},400);
  const {data:before,error:lookupError}=await db.from('registrations').select('id,status').eq('id',body.id).maybeSingle();
  if(lookupError||!before)return json({error:'Application not found'},404);
- if(!process.env.SUPABASE_ANON_KEY)return json({error:'CMS authentication configuration is incomplete'},503);
- const actorDb=createClient(url,process.env.SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:bearer}}});
+ const publicKey=process.env.SUPABASE_ANON_KEY||process.env.VITE_SUPABASE_ANON_KEY;
+ if(!publicKey)return json({error:'CMS authentication configuration is incomplete'},503);
+ const actorDb=createClient(url,publicKey,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:bearer}}});
  const {data:updated,error}=await actorDb.rpc('cms_change_application_status',{p_id:body.id,p_status:body.status,p_expected_status:before.status});
  if(error){console.error('Atomic CMS status update failed',error.code);return json({error:error.code==='40001'?'Application changed; refresh and retry':'Unable to update application and audit record'},error.code==='40001'?409:503)}
  return json({application:Array.isArray(updated)?updated[0]:updated});
