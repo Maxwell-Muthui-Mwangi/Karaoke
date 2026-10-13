@@ -1,16 +1,16 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {createClient} from '@supabase/supabase-js';
 import './admin.css';
 const url=import.meta.env.VITE_SUPABASE_URL;
 const anon=import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase=url&&anon?createClient(url,anon):null;
 const states=['pending','approved','waitlisted','rejected'];
-export function AdminApp(){
+export function AdminApp(){const refreshSeq=useRef(0);
  const [page,setPage]=useState(0),[total,setTotal]=useState(0),[stats,setStats]=useState({pending:0,approved:0,performers:0});const [session,setSession]=useState(null),[email,setEmail]=useState(''),[password,setPassword]=useState(''),[rows,setRows]=useState([]),[role,setRole]=useState(''),[error,setError]=useState(''),[loading,setLoading]=useState(false),[filter,setFilter]=useState('all'),[query,setQuery]=useState('');
  useEffect(()=>{if(!supabase)return;supabase.auth.getSession().then(({data})=>setSession(data.session));const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,next)=>setSession(next));return()=>subscription.unsubscribe()},[]);
  async function api(method='GET',payload){const {data:{session:current}}=await supabase.auth.getSession();if(!current)throw Error('Sign in again.');const response=await fetch('/api/admin-applications'+(method==='GET'?'?page='+page:''),{method,headers:{Authorization:'Bearer '+current.access_token,...(payload?{'Content-Type':'application/json'}:{})},body:payload?JSON.stringify(payload):undefined});const data=await response.json().catch(()=>({}));if(!response.ok)throw Error(data.error||'Request failed');return data}
- async function refresh(){setLoading(true);setError('');try{const data=await api();setRows(Array.isArray(data.applications)?data.applications:[]);setTotal(Number(data.total)||0);setStats(data.stats||{pending:0,approved:0,performers:0});setRole(data.role||'')}catch(e){setRows([]);setRole('');setTotal(0);setStats({pending:0,approved:0,performers:0});setError(e.message)}finally{setLoading(false)}}
- useEffect(()=>{if(session)refresh();else{setRows([]);setRole('');setTotal(0);setStats({pending:0,approved:0,performers:0})}},[session?.user?.id,page]);
+ async function refresh(){const seq=++refreshSeq.current;setLoading(true);setError('');try{const data=await api();if(seq!==refreshSeq.current)return;setRows(Array.isArray(data.applications)?data.applications:[]);setTotal(Number(data.total)||0);setStats(data.stats||{pending:0,approved:0,performers:0});setRole(data.role||'')}catch(e){if(seq!==refreshSeq.current)return;setRows([]);setRole('');setTotal(0);setStats({pending:0,approved:0,performers:0});setError(e.message)}finally{if(seq===refreshSeq.current)setLoading(false)}}
+ useEffect(()=>{if(session)refresh();else{refreshSeq.current++;setRows([]);setRole('');setTotal(0);setStats({pending:0,approved:0,performers:0})}},[session?.user?.id,page]);
  async function signIn(e){e.preventDefault();setError('');setLoading(true);try{const {error:e}=await supabase.auth.signInWithPassword({email,password});if(e)throw e;setPassword('')}catch(e){setError(e.message)}finally{setLoading(false)}}
  async function change(id,status){if(!window.confirm('Change application status to '+status+'?'))return;setLoading(true);setError('');try{await api('PATCH',{id,status});await refresh()}catch(e){setError(e.message)}finally{setLoading(false)}}
  const visible=rows.filter(r=>(filter==='all'||r.status===filter)&&[r.full_name,r.email,r.reference,r.stage_name].some(x=>(x||'').toLowerCase().includes(query.toLowerCase())));
