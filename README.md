@@ -1,4 +1,4 @@
-# Karaoke ZU
+# Zetech Karaoke
 
 Zetech University Karaoke Night — The Dream. The Degree. The Mic.
 
