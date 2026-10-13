@@ -12,7 +12,7 @@ export default async function handler(request){
  if(authError||!user)return json({error:'Invalid session'},401);
  const {data:member,error:roleError}=await db.from('cms_staff').select('role,active').eq('user_id',user.id).maybeSingle();
  if(roleError)return json({error:'CMS staff table not configured'},503);
- if(!member?.active)return json({error:'Not authorized for CMS'},403);
+ if(!member?.active)return json({error:'Not authorised for CMS'},403);
  if(request.method==='GET'){
   const parsed=new URL(request.url);const page=Number(parsed.searchParams.get('page')||0);if(!Number.isSafeInteger(page)||page<0||page>100000)return json({error:'Invalid page'},400);
   const size=100;const {data,error,count}=await db.from('registrations').select('id,reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,created_at',{count:'exact'}).order('created_at',{ascending:false}).order('id',{ascending:false}).range(page*size,page*size+size-1);
