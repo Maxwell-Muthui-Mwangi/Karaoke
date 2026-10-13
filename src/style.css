@@ -176,3 +176,12 @@ em{color:var(--zu-coral)}
 .playlist-tab.active{background:var(--zu-mustard);border-color:var(--zu-mustard);color:var(--zu-blue)}
 .playlist-tab:focus-visible{outline:3px solid var(--zu-white);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.playlist-tab:hover{transform:none}}
+
+/* Share controls for the selected patron playlist */
+.playlist-share{display:flex;flex-direction:column;gap:12px;flex-basis:100%;width:100%;margin-top:20px;padding-top:18px;border-top:1px solid #D6C93D}
+.playlist-share strong{color:#fff;font-size:15px}
+.playlist-share-actions{display:flex;gap:10px;flex-wrap:wrap}
+.playlist-share-actions a{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:8px;background:#D6C93D;color:#002147;font-size:14px;font-weight:800;text-decoration:none;transition:transform .2s,background .2s}
+.playlist-share-actions a:hover{background:#3D8CD6;transform:translateY(-2px)}
+.playlist-share-actions a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.playlist-share-actions a:hover{transform:none}}
