@@ -34,7 +34,7 @@ export default async function handler(request){
  const request_id=field(data.request_id,36);if(!request_id||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(request_id))return reply({error:'Invalid submission identifier'},400);const reference='KZU-'+randomUUID().slice(0,12).toUpperCase();
  try{
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const forwarded=request.headers.get('x-nf-client-connection-ip')||request.headers.get('cf-connecting-ip')||request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'';
+ const forwarded=request.headers.get('x-nf-client-connection-ip')||'';
  const secret=process.env.REGISTRATION_RATE_LIMIT_SECRET||key;
  const digest=value=>createHmac('sha256',secret).update(value).digest('hex');
  const buckets=[['ip:'+digest(forwarded||'unknown'),15,3600],['email:'+digest(email),5,86400]];
