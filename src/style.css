@@ -11,3 +11,38 @@
 header{background:#fff!important;border-bottom:1px solid #e4e9f0!important;box-shadow:0 2px 14px #00214712;color:#002147!important;min-height:78px;padding:10px clamp(18px,4vw,64px)!important}header nav a{color:#002147!important;font-weight:700}header nav a:hover{color:#1767a8!important}header nav .pill{border:1px solid #002147!important;background:#002147;color:#fff!important}header nav .pill:hover{background:#3D8CD6!important;border-color:#3D8CD6!important;color:#002147!important}.brand-logo{width:clamp(230px,31vw,390px)!important;max-height:65px!important;object-fit:contain;object-position:left center;padding:0!important;border-radius:0!important}.logo{max-width:55%;display:flex;align-items:center}@media(max-width:800px){header{min-height:68px!important;padding:9px 15px!important}.brand-logo{width:clamp(170px,49vw,270px)!important;max-height:50px!important}header nav .pill{padding:9px 12px;font-size:12px}}@media(max-width:390px){.brand-logo{width:175px!important}header nav .pill{font-size:11px;padding:8px}}
 
 .registration-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:28px}.registration-form label{display:flex;flex-direction:column;gap:7px;font-size:14px;font-weight:700}.registration-form input:not([type=checkbox]),.registration-form select,.registration-form textarea{width:100%;border:1px solid #9bb3ca;border-radius:5px;padding:12px;font:inherit;background:#fff;color:#002147;min-height:45px}.registration-form textarea{min-height:95px}.registration-form label:has(textarea),.registration-form .consent,.registration-form p,.registration-form small{grid-column:1/-1}.registration-form .consent{flex-direction:row;align-items:flex-start;line-height:1.5}.registration-form .consent input{margin-top:5px}.registration-form button{border:0;cursor:pointer;justify-content:center}.registration-form button:disabled{opacity:.6;cursor:wait}.registration-form p{margin:0;overflow-wrap:anywhere}.registration-form small{color:#d9e8f4}@media(max-width:680px){.registration-form{grid-template-columns:1fr}}
+
+/* Five-slide editorial showcase */
+.showcase{position:relative;isolation:isolate;background:#002147;color:white;overflow:hidden;padding:0!important}
+.showcase-stage{height:clamp(500px,76vh,780px);position:relative}
+.showcase-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .85s ease,visibility .85s;overflow:hidden;display:flex;align-items:center}
+.showcase-slide.active{opacity:1;visibility:visible;z-index:1}
+.showcase-slide>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.07);transition:transform 9s ease}
+.showcase-slide.active>img{transform:scale(1)}
+.showcase-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,22,50,.94) 0%,rgba(0,33,71,.78) 45%,rgba(0,0,0,.22) 100%)}
+.showcase-content{position:relative;z-index:2;max-width:800px;margin-left:clamp(22px,8vw,140px);margin-right:22px;transform:translateY(25px);opacity:0;transition:transform .8s ease .16s,opacity .8s ease .16s}
+.showcase-slide.active .showcase-content{transform:translateY(0);opacity:1}
+.showcase-kicker{font-size:clamp(11px,1.4vw,15px);font-weight:800;letter-spacing:.22em;color:#d6c93d}
+.showcase-content h2{font-size:clamp(45px,7.5vw,112px);line-height:1.01;letter-spacing:-.045em;margin:20px 0;max-width:850px;color:#fff}
+.showcase-content p{font-size:clamp(17px,2vw,23px);line-height:1.5;max-width:650px;color:#f2f6fb;margin-bottom:28px}
+.showcase-number{position:absolute;right:clamp(20px,5vw,80px);bottom:95px;font-weight:800;letter-spacing:.2em;z-index:2}
+.showcase-controls{position:absolute;z-index:3;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:15px;background:rgba(0,20,44,.75);backdrop-filter:blur(12px);padding:9px 16px;border-radius:40px}
+.showcase-controls button{cursor:pointer;color:white;background:transparent;border:1px solid #ffffff70;border-radius:50%;height:38px;min-width:38px;font:inherit}
+.showcase-controls button:hover,.showcase-controls button:focus-visible{background:#3D8CD6;color:#002147}
+.showcase-dots{display:flex;gap:8px;align-items:center}
+.showcase-dots button{height:12px;min-width:12px;width:12px;border:0;background:#ffffff70}
+.showcase-dots button.selected{background:#d6c93d;width:29px;border-radius:10px}
+.showcase-slide.spotlight .showcase-shade{background:linear-gradient(90deg,#080e24ed 0%,#2d1546ba 50%,#0002 100%)}
+.showcase-slide.spotlight .showcase-kicker{color:#ff94b5}
+.showcase-slide.community .showcase-shade{background:linear-gradient(90deg,#082b37f2,#007c8a99,#0003)}
+.showcase-slide.editorial .showcase-shade{background:linear-gradient(90deg,#111b36f2,#503752bb,#0003)}
+.showcase-slide.festival .showcase-shade{background:linear-gradient(90deg,#391322ef,#862846aa,#0003)}
+/* Subtle scroll reveal; remains visible without JavaScript */
+@keyframes floatIn{from{opacity:.65;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@supports (animation-timeline:view()){main>section:not(.showcase) h2,main>section:not(.showcase) .tile,main>section:not(.showcase) figure{animation:floatIn .7s ease both;animation-timeline:view();animation-range:entry 0% entry 30%}}
+.tile,.btn,.visual-grid img,.photo-strip img{transition:transform .3s ease,box-shadow .3s ease,filter .3s ease}
+.tile:hover{transform:translateY(-5px);box-shadow:0 16px 40px #0002}
+.btn:hover{transform:translateY(-2px)}
+.visual-grid figure:hover img,.photo-strip img:hover{filter:saturate(1.2);transform:scale(1.025)}
+@media(max-width:700px){.showcase-stage{height:620px;max-height:calc(100svh - 60px);min-height:480px}.showcase-shade,.showcase-slide.spotlight .showcase-shade,.showcase-slide.community .showcase-shade,.showcase-slide.editorial .showcase-shade,.showcase-slide.festival .showcase-shade{background:linear-gradient(0deg,#00132eea 0%,#001c39a8 56%,#0004 100%)}.showcase-slide{align-items:flex-end;padding-bottom:115px}.showcase-content{margin-left:22px}.showcase-content h2{font-size:clamp(43px,11vw,72px)}.showcase-number{bottom:92px;right:24px}}
+@media(prefers-reduced-motion:reduce){.showcase-slide,.showcase-slide>img,.showcase-content,.tile,.btn,.visual-grid img,.photo-strip img{animation:none!important;transition:none!important;transform:none!important}.showcase-content{opacity:1!important}main>section:not(.showcase) h2,main>section:not(.showcase) .tile,main>section:not(.showcase) figure{animation:none!important}}
