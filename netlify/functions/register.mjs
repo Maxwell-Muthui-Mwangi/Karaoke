@@ -1,5 +1,5 @@
 import {createClient} from '@supabase/supabase-js';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHmac} from 'node:crypto';
 const categories=new Set(['Singing / Karaoke','Rap / Freestyle','Dance','Spoken Word','DJ / Music Production','Instruments','Comedy','Other']);
 const affiliations=new Set(['Student','Staff','Alumni','Guest']);
 async function sendReceipt({email,name,reference,kind}) {
@@ -35,9 +35,8 @@ export default async function handler(request){
  try{
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
  const forwarded=request.headers.get('x-nf-client-connection-ip')||request.headers.get('cf-connecting-ip')||request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'';
- const {createHash}=await import('node:crypto');
  const secret=process.env.REGISTRATION_RATE_LIMIT_SECRET||key;
- const digest=value=>createHash('sha256').update(secret+':'+value).digest('hex');
+ const digest=value=>createHmac('sha256',secret).update(value).digest('hex');
  const buckets=[['ip:'+digest(forwarded||'unknown'),15,3600],['email:'+digest(email),5,86400]];
  for(const [bucket,limit,seconds] of buckets){const {data:permitted,error:limitError}=await db.rpc('check_registration_rate_limit',{p_bucket:bucket,p_limit:limit,p_window_seconds:seconds});if(limitError){console.error('Registration rate limit unavailable',limitError.code);return reply({error:'Registration is temporarily unavailable. Please try again later.'},503)}if(!permitted)return reply({error:'Too many registration attempts. Please try again later.'},429,{'Retry-After':'3600'})}
  const {error}=await db.from('registrations').insert({reference,request_id,kind,full_name,email,phone,affiliation,department,category:kind==='performer'?category:null,stage_name:kind==='performer'?stage_name:null,act_description:kind==='performer'?act_description:null,consent_at:new Date().toISOString()});
