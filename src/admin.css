@@ -8,3 +8,23 @@
 .cms,.cms button,.cms input,.cms select,.cms textarea{font-family:'Montserrat',sans-serif}
 
 .cms-pagination{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:24px 0}.cms-pagination span{font-weight:700}.cms-pagination button{min-width:115px}
+
+/* Small-screen CMS refinements: readable cards and no horizontal overflow. */
+.cms-header{min-width:0}
+.cms-header a,.cms-header strong{overflow-wrap:anywhere}
+.cms-content,.cms-list,.cms-item,.cms-tools{min-width:0}
+.cms-item{overflow-wrap:anywhere}
+.cms-pagination{max-width:100%}
+@media(max-width:420px){
+ .cms-header{gap:10px;padding:14px 12px}
+ .cms-content{padding:20px 12px}
+ .cms-header strong{width:100%;order:2}
+ .cms-header button{min-height:44px}
+ .cms-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cms-stat{padding:12px;min-width:0}
+ .cms-stat strong{font-size:clamp(22px,7vw,32px)}
+ .cms-pagination{gap:10px}
+ .cms-pagination button{min-width:0;flex:1}
+ .cms-pagination span{width:100%;text-align:center;order:-1}
+}
+@media(max-width:320px){.cms-stats{grid-template-columns:minmax(0,1fr)}}
