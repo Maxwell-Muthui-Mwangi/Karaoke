@@ -225,3 +225,31 @@ html,body,#root,button,input,select,textarea{font-family:'Montserrat',sans-serif
 
 /* Keep the anti-spam honeypot out of visual layout and keyboard navigation. */
 .registration-trap{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+
+/* Mobile-first overflow and touch-target hardening: 320px through tablet. */
+html{max-width:100%;overflow-x:clip;-webkit-text-size-adjust:100%}
+body,#root{min-width:0;max-width:100%}
+img,video,iframe,svg{max-width:100%}
+img,video{height:auto}
+:where(main,section,article,aside,footer,header,nav,form){min-width:0}
+:where(h1,h2,h3,h4,p,a,button,label){overflow-wrap:break-word}
+:where(input,textarea,select,button){max-width:100%;font-family:'Montserrat',sans-serif}
+:where(input,textarea,select){font-size:16px}
+:where(button,.btn,input[type="submit"],a.pill){min-height:44px}
+@media(max-width:600px){
+ :where(main,section,article,aside,footer){max-width:100%}
+ :where(.registration-form,.registration-form label,.registration-form input,.registration-form select,.registration-form textarea){min-width:0;max-width:100%}
+ .registration-form input:not([type="checkbox"]),.registration-form select,.registration-form textarea{width:100%;box-sizing:border-box}
+ .registration-form textarea{resize:vertical}
+ .registration-form .btn{width:100%;white-space:normal}
+ .site-topbar-inner{padding-inline:12px}
+ header nav[aria-label="Main navigation"]{scroll-padding-inline:12px;-webkit-overflow-scrolling:touch}
+}
+@media(max-width:360px){
+ header .university-karaoke-brand{max-width:100%}
+ header .karaoke-brand-wordmark strong{font-size:clamp(13px,4vw,17px)}
+ .site-topbar .topbar-links{row-gap:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+}
