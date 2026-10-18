@@ -34,6 +34,7 @@ export default async function handler(request){
  if(raw.length>2048)return json({error:'Request too large'},413);
  let body;try{body=JSON.parse(raw)}catch{return json({error:'Invalid JSON'},400)}
  if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.id!=='string'||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.id)||!(body.action==='archive'&&typeof body.archive==='boolean')&& !allowed.has(body.status))return json({error:'Invalid application update'},400);
+ if(body.action==='archive' ? (typeof body.archive!=='boolean'||body.status!==undefined) : (body.action!==undefined||!allowed.has(body.status)||body.archive!==undefined))return json({error:'Invalid application action'},400);
  const publicKey=process.env.SUPABASE_ANON_KEY||process.env.VITE_SUPABASE_ANON_KEY;
  if(!publicKey)return json({error:'CMS authentication configuration is incomplete'},503);
  const actorDb=createClient(url,publicKey,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:bearer}}});
