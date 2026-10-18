@@ -8,10 +8,10 @@ export default async function handler(){
  const url=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL||'https://khwohfkxjzwhrgztfpat.supabase.co';
  if(!url||!key||!flow){console.error('Excel sync not configured');return new Response('Excel sync not configured',{status:503})}
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:queue,error}=await db.from('registration_excel_sync').select('registration_id,attempts').in('state',['pending','failed']).order('created_at',{ascending:true}).limit(25);
+ const {data:queue,error}=await db.from('registration_excel_sync').select('registration_id,attempts,last_attempt_at').in('state',['pending','failed']).order('created_at',{ascending:true}).limit(250);
  if(error){console.error('Excel queue unavailable',error.code);return new Response('Queue unavailable',{status:503})}
  let completed=0,failed=0;
- for(const job of queue||[]){
+ for(const job of (queue||[]).filter(job=>!job.last_attempt_at||Date.now()-Date.parse(job.last_attempt_at)>=Math.min(3600000,60000*2**Math.min(Number(job.attempts)||0,6))).slice(0,25)){
   const {data:r,error:readError}=await db.from('registrations').select('reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,consent_at,created_at').eq('id',job.registration_id).single();
   if(readError||!r){failed++;continue}
   try{
