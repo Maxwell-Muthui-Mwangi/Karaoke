@@ -8,7 +8,7 @@ export default async function handler(){
  const url=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL||'https://khwohfkxjzwhrgztfpat.supabase.co';
  if(!url||!key||!flow){console.error('Excel sync not configured');return new Response('Excel sync not configured',{status:503})}
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:queue,error}=await db.rpc('karaoke_claim_jobs',{p_service:'excel',p_limit:25});
+ const {data:queue,error}=await db.rpc('karaoke_claim_jobs',{p_service:'excel',p_limit:5});
  if(error){console.error('Excel queue unavailable',error.code);return new Response('Queue unavailable',{status:503})}
  let completed=0,failed=0;
  for(const job of queue||[]){
