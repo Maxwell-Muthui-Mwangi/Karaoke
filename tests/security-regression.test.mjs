@@ -54,3 +54,10 @@ test('Registration form prevents repeated in-flight submission attempts',()=>{
  assert.ok(form.includes('disabled={busy}'));
  assert.ok(form.includes('requestId.current'));
 });
+
+test('Registration network timeout retains retry safety',()=>{
+ const form=read('src/RegistrationForm.jsx');
+ assert.ok(form.includes('AbortSignal.timeout(20000)'));
+ assert.ok(form.includes('requestId.current'));
+ assert.ok(form.includes('submitting.current=false'));
+});
