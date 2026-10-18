@@ -45,3 +45,10 @@ test('CMS rejects mixed archive and status updates',()=>{
  assert.ok(cms.includes("body.archive!==undefined"));
  assert.ok(cms.includes("Invalid application action"));
 });
+
+test('Registration form prevents repeated in-flight submission attempts',()=>{
+ const form=read('src/RegistrationForm.jsx');
+ assert.ok(form.includes('if(busy)return;'));
+ assert.ok(form.includes('disabled={busy}'));
+ assert.ok(form.includes('requestId.current'));
+});
