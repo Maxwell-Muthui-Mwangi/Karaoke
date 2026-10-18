@@ -7,7 +7,7 @@ export default async function handler(){
  const {SUPABASE_URL:url,SUPABASE_SERVICE_ROLE_KEY:key,POWER_AUTOMATE_EXCEL_URL:flow}=process.env;
  if(!url||!key||!flow){console.error('Excel sync not configured');return new Response('Excel sync not configured',{status:503})}
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:queue,error}=await db.from('registration_excel_sync').select('registration_id,attempts').neq('state','synced').lt('attempts',100).order('created_at',{ascending:true}).limit(25);
+ const {data:queue,error}=await db.from('registration_excel_sync').select('registration_id,attempts').neq('state','synced').order('created_at',{ascending:true}).limit(25);
  if(error){console.error('Excel queue unavailable',error.code);return new Response('Queue unavailable',{status:503})}
  let completed=0,failed=0;
  for(const job of queue||[]){
