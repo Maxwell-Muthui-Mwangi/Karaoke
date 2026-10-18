@@ -14,7 +14,7 @@ test('Registration smoke tests never create users without explicit consent',()=>
  assert.match(smoke,/randomUUID/);
 });
 test('Workers claim jobs atomically and reject stale completion',()=>{
- for(const [file,service] of [['send-receipts.mjs','receipt'],['sync-excel.mjs','excel']]){
+ for(const [file,service] of [['send-receipts.mjs','receipt']]){
   const worker=read('netlify/functions/'+file);
   assert.ok(worker.includes("db.rpc('karaoke_claim_jobs'"));
   assert.ok(worker.includes("p_service:'"+service+"'"));
@@ -23,7 +23,7 @@ test('Workers claim jobs atomically and reject stale completion',()=>{
   assert.ok(worker.includes("r.reference.startsWith('KZU-TEST-')"));
  }
 });
-test('CMS validates session, role and uses atomic update functions',()=>{
+test('Excel background sync is disabled',()=>{\n assert.doesNotMatch(read('netlify.toml'),/sync-excel/);\n});\ntest('CMS validates session, role and uses atomic update functions',()=>{
  const cms=read('netlify/functions/admin-applications.mjs');
  for(const marker of ['db.auth.getUser','cms_staff','cms_change_application_status','cms_set_application_archive'])assert.ok(cms.includes(marker));
 });
