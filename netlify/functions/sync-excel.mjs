@@ -14,14 +14,15 @@ export default async function handler(){
  for(const job of (queue||[]).filter(job=>!job.last_attempt_at||Date.now()-Date.parse(job.last_attempt_at)>=Math.min(3600000,60000*2**Math.min(Number(job.attempts)||0,6))).slice(0,25)){
   const {data:r,error:readError}=await db.from('registrations').select('reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,consent_at,created_at').eq('id',job.registration_id).single();
   if(readError||!r){failed++;continue}
+  if(r.reference.startsWith('KZU-TEST-')){await db.from('registration_excel_sync').update({state:'skipped',last_error:'Integration fixture'}).eq('registration_id',job.registration_id).in('state',['pending','failed']);continue;}
   try{
    // Flow MUST upsert on reference (not blindly append), otherwise retries create duplicate Excel rows.
    const response=await fetch(flow,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({registration_reference:r.reference,...r}),signal:AbortSignal.timeout(20000)});
    if(!response.ok)throw Error('Microsoft flow HTTP '+response.status);
    const acknowledgement=await response.json().catch(()=>null);
    if(acknowledgement?.saved!==true)throw Error('Microsoft flow did not confirm Excel write');
-   const {error:saveError}=await db.from('registration_excel_sync').update({state:'synced',attempts:job.attempts+1,last_error:null,last_attempt_at:new Date().toISOString(),synced_at:new Date().toISOString()}).eq('registration_id',job.registration_id).eq('attempts',job.attempts);
-   if(saveError)throw Error('Queue update failed');
+   const {data:savedRows,error:saveError}=await db.from('registration_excel_sync').update({state:'synced',attempts:job.attempts+1,last_error:null,last_attempt_at:new Date().toISOString(),synced_at:new Date().toISOString()}).eq('registration_id',job.registration_id).eq('attempts',job.attempts).in('state',['pending','failed']).select('registration_id');
+   if(saveError||!savedRows?.length)throw Error('Queue update failed');
    completed++;
   }catch(e){
    failed++;console.error('Excel sync delivery failed',r.reference,e?.message);
