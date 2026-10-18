@@ -25,6 +25,8 @@ jobs:
           node --check netlify/functions/sync-excel.mjs
           node --check netlify/functions/send-receipts.mjs
           node --check netlify/functions/admin-applications.mjs
+      - name: Run security regression tests
+        run: node --test tests/*.test.mjs
       - name: Build production site
         run: npm run build
       - name: Check build output
