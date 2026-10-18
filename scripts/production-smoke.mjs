@@ -8,7 +8,7 @@ try{
  const home=await get('/');assert(home.ok,'Home returned '+home.status);const html=await home.text();assert(html.includes('id="root"')||html.includes('id="app"'),'SPA mount point missing');console.log('PASS homepage HTTP '+home.status);
  const api=await get('/api/register');assert(api.status===405,'Registration GET expected 405, got '+api.status);console.log('PASS registration endpoint method guard');
  const invalid=await get('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});assert(invalid.status===400,'Invalid registration expected 400, got '+invalid.status);console.log('PASS invalid registration rejected');
- const cms=await get('/api/admin-applications');assert(cms.status===401||cms.status===503,'CMS without credentials expected 401 or unconfigured 503, got '+cms.status);console.log('PASS CMS unauthenticated response '+cms.status);
+ const cms=await get('/api/admin-applications');assert(cms.status===401,'CMS without credentials expected 401, got '+cms.status);console.log('PASS CMS unauthenticated response '+cms.status);
  if(process.env.LIVE_TEST_CONSENT!=='yes'){console.log('SKIP real registration: set LIVE_TEST_CONSENT=yes and LIVE_TEST_EMAIL, LIVE_TEST_NAME, LIVE_TEST_PHONE only with consent');process.exit(0)}
  const email=process.env.LIVE_TEST_EMAIL,name=process.env.LIVE_TEST_NAME,phone=process.env.LIVE_TEST_PHONE;
  assert(email&&name&&phone,'LIVE_TEST_EMAIL, LIVE_TEST_NAME and LIVE_TEST_PHONE are required');
