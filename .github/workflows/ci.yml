@@ -23,6 +23,7 @@ jobs:
         run: |
           node --check netlify/functions/register.mjs
           node --check netlify/functions/sync-excel.mjs
+          node --check netlify/functions/send-receipts.mjs
           node --check netlify/functions/admin-applications.mjs
       - name: Build production site
         run: npm run build
