@@ -77,3 +77,9 @@ test('CMS API requests have a bounded network timeout',()=>{
  const cms=read('src/AdminApp.jsx');
  assert.ok(cms.includes('signal:AbortSignal.timeout(20000)'));
 });
+
+test('Patron playlist YouTube link uses valid JSX attribute expression',()=>{
+ const source=read('src/main.jsx');
+ assert.doesNotMatch(source,/href=\(selected\.type===/);
+ assert.match(source,/href=\{selected\.type===/);
+});
