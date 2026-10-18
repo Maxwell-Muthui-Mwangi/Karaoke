@@ -253,3 +253,22 @@ img,video{height:auto}
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
 }
+
+/* Standalone pages: compact registration-first home and consistent inner-page headers. */
+.page-intro{padding-block:clamp(42px,7vw,100px);text-align:center;background:linear-gradient(135deg,#002147,#123755);color:#fff}
+.page-intro h1{font-size:clamp(2rem,6vw,4.5rem);line-height:1.12;margin:12px auto;max-width:1100px}
+.page-intro p{max-width:760px;margin-inline:auto}
+.page-cta,.home-cta,.home-patron{text-align:center}
+.page-cta{padding-block:clamp(30px,5vw,65px)}
+.home-patron{padding-block:clamp(36px,5vw,65px)}
+.home-patron p{max-width:760px;margin-inline:auto}
+.home-cta{padding-block:clamp(36px,5vw,65px);background:#002147;color:#fff}
+.home-cta p{max-width:760px;margin-inline:auto}
+.home-cta .actions{justify-content:center;flex-wrap:wrap}
+.home-cta h2{font-size:clamp(1.7rem,4vw,3.2rem)}
+@media(max-width:600px){
+ .page-intro{padding:38px 16px}
+ .home-patron,.home-cta{padding:32px 16px}
+ .home-cta .actions{display:flex;flex-direction:column;align-items:stretch}
+ .home-cta .actions .btn{width:100%;text-align:center}
+}
