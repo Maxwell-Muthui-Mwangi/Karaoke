@@ -17,6 +17,8 @@ export default async function handler(){
    // Flow MUST upsert on reference (not blindly append), otherwise retries create duplicate Excel rows.
    const response=await fetch(flow,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({registration_reference:r.reference,...r}),signal:AbortSignal.timeout(20000)});
    if(!response.ok)throw Error('Microsoft flow HTTP '+response.status);
+   const acknowledgement=await response.json().catch(()=>null);
+   if(acknowledgement?.saved!==true)throw Error('Microsoft flow did not confirm Excel write');
    const {error:saveError}=await db.from('registration_excel_sync').update({state:'synced',attempts:job.attempts+1,last_error:null,last_attempt_at:new Date().toISOString(),synced_at:new Date().toISOString()}).eq('registration_id',job.registration_id).eq('attempts',job.attempts);
    if(saveError)throw Error('Queue update failed');
    completed++;
