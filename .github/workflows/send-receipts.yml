@@ -1,0 +1,29 @@
+# Replaces the Netlify schedule for send-receipts (every 10 minutes).
+# Harmless until both repository secrets exist: RECEIPTS_URL and RECEIPTS_CRON_SECRET.
+# Running alongside Netlify is safe (karaoke_claim_jobs claims each job atomically),
+# but remove netlify/functions/send-receipts.mjs's schedule at cutover so one worker owns the queue.
+name: Send registration receipts
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: send-receipts
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger receipt worker
+        env:
+          RECEIPTS_URL: ${{ secrets.RECEIPTS_URL }}
+          CRON_SECRET: ${{ secrets.RECEIPTS_CRON_SECRET }}
+        run: |
+          if [ -z "$RECEIPTS_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Receipt timer not configured yet (RECEIPTS_URL / RECEIPTS_CRON_SECRET missing) - skipping."
+            exit 0
+          fi
+          curl -sS --fail-with-body --max-time 120 -X POST "$RECEIPTS_URL" -H "x-cron-secret: $CRON_SECRET"
