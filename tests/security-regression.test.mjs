@@ -18,6 +18,7 @@ test('Workers claim jobs atomically and reject stale completion',()=>{
   const worker=read('netlify/functions/'+file);
   assert.ok(worker.includes("db.rpc('karaoke_claim_jobs'"));
   assert.ok(worker.includes("p_service:'"+service+"'"));
+  assert.ok(worker.includes('p_limit:5'),'Worker batch must remain bounded within its database lease');
   assert.ok(worker.includes(".eq('attempts',job.attempts).eq('state','processing')"));
   assert.ok(worker.includes("r.reference.startsWith('KZU-TEST-')"));
  }
