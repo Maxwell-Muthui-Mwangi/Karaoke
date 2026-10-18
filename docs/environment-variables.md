@@ -10,10 +10,9 @@ Set these values in Netlify Site configuration → Environment variables for zuk
 | SUPABASE_SERVICE_ROLE_KEY | Functions, secret | Server database writes and workers |
 | SUPABASE_ANON_KEY | Functions | CMS authentication/status updates |
 | RESEND_API_KEY | Functions, secret | Email receipt delivery |
-| POWER_AUTOMATE_EXCEL_URL | Functions, secret, optional | Microsoft Excel sync flow |
 
 Verify ballershopke.ltd in Resend and authorise sender Karaoke@ballershopke.ltd. Never put server keys in VITE_ variables. Netlify Functions cannot read runtime variables defined only in netlify.toml. Redeploy after adding or updating variables.
 
-Run an end-to-end consented test through /#join: confirm reference in Supabase and /admin, confirm receipt queue transitions pending → sent, and confirm email arrives. Check Netlify function logs and Resend logs. Excel sync requires a separate Power Automate flow and confirmed upsert acknowledgement.
+Run an end-to-end consented test through /#join: confirm reference in Supabase and /admin, confirm receipt queue transitions pending → sent, and confirm email arrives. Check Netlify function logs and Resend logs. Excel synchronisation is disabled: the scheduled Excel function and registration triggers have been removed. Historical queue records remain for audit. Remove the obsolete POWER_AUTOMATE_EXCEL_URL variable from Netlify if it is still configured and unused elsewhere.
 
 Environment configuration alone cannot guarantee 100% availability or prevent all data loss. Configure database backups, restore drills, error monitoring, and alerts for failed outbox jobs.
