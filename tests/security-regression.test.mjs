@@ -72,3 +72,8 @@ test('CMS handles upstream authentication failures explicitly',()=>{
  assert.ok(cms.includes('Authentication service temporarily unavailable'));
  assert.ok(cms.includes('result.data?.user'));
 });
+
+test('CMS API requests have a bounded network timeout',()=>{
+ const cms=read('src/AdminApp.jsx');
+ assert.ok(cms.includes('signal:AbortSignal.timeout(20000)'));
+});
