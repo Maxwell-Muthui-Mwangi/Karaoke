@@ -8,8 +8,14 @@ export default async function handler(request){
  const bearer=request.headers.get('authorization')||'';
  if(!/^Bearer\s+\S+$/.test(bearer))return json({error:'Authentication required'},401);
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:{user},error:authError}=await db.auth.getUser(bearer.replace(/^Bearer\s+/,''));
- if(authError||!user)return json({error:'Invalid session'},401);
+ let user;
+ try{
+  const result=await db.auth.getUser(bearer.replace(/^Bearer\s+/,''));
+  if(result.error||!result.data?.user)return json({error:'Invalid session'},401);
+  user=result.data.user;
+ }catch{
+  return json({error:'Authentication service temporarily unavailable'},503);
+ }
  const {data:member,error:roleError}=await db.from('cms_staff').select('role,active').eq('user_id',user.id).maybeSingle();
  if(roleError)return json({error:'CMS staff table not configured'},503);
  if(!member?.active||!['admin','editor','viewer'].includes(member.role))return json({error:'Not authorised for CMS'},403);
