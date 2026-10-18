@@ -3,8 +3,8 @@ const json=(value,status=200)=>new Response(JSON.stringify(value),{status,header
 const allowed=new Set(['pending','approved','waitlisted','rejected']);
 export default async function handler(request){
  if(!['GET','PATCH'].includes(request.method))return json({error:'Method not allowed'},405);
- const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
- if(!url||!key)return json({error:'CMS service is not configured'},503);
+ const url=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL||'https://khwohfkxjzwhrgztfpat.supabase.co',key=process.env.SUPABASE_SERVICE_ROLE_KEY;
+ if(!key)return json({error:'CMS server secret is unavailable to Netlify Functions. Configure SUPABASE_SERVICE_ROLE_KEY in the Functions runtime scope and redeploy.'},503);
  const bearer=request.headers.get('authorization')||'';
  if(!/^Bearer\s+\S+$/.test(bearer))return json({error:'Authentication required'},401);
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
