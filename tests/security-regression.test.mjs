@@ -66,3 +66,9 @@ test('CMS rejects active staff with unrecognised roles',()=>{
  const cms=read('netlify/functions/admin-applications.mjs');
  assert.ok(cms.includes("!['admin','editor','viewer'].includes(member.role)"));
 });
+
+test('CMS handles upstream authentication failures explicitly',()=>{
+ const cms=read('netlify/functions/admin-applications.mjs');
+ assert.ok(cms.includes('Authentication service temporarily unavailable'));
+ assert.ok(cms.includes('result.data?.user'));
+});
