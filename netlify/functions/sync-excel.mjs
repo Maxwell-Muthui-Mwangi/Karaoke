@@ -4,7 +4,8 @@ import {createClient} from '@supabase/supabase-js';
 // Configure POWER_AUTOMATE_EXCEL_URL as a secret in Netlify, never in frontend or GitHub.
 export const config={schedule:'*/5 * * * *'};
 export default async function handler(){
- const {SUPABASE_URL:url,SUPABASE_SERVICE_ROLE_KEY:key,POWER_AUTOMATE_EXCEL_URL:flow}=process.env;
+ const {SUPABASE_SERVICE_ROLE_KEY:key,POWER_AUTOMATE_EXCEL_URL:flow}=process.env;
+ const url=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL||'https://khwohfkxjzwhrgztfpat.supabase.co';
  if(!url||!key||!flow){console.error('Excel sync not configured');return new Response('Excel sync not configured',{status:503})}
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
  const {data:queue,error}=await db.from('registration_excel_sync').select('registration_id,attempts').neq('state','synced').order('created_at',{ascending:true}).limit(25);
