@@ -61,3 +61,8 @@ test('Registration network timeout retains retry safety',()=>{
  assert.ok(form.includes('requestId.current'));
  assert.ok(form.includes('submitting.current=false'));
 });
+
+test('CMS rejects active staff with unrecognised roles',()=>{
+ const cms=read('netlify/functions/admin-applications.mjs');
+ assert.ok(cms.includes("!['admin','editor','viewer'].includes(member.role)"));
+});
