@@ -6,7 +6,7 @@ export default async function handler(){
  const key=process.env.SUPABASE_SERVICE_ROLE_KEY,mailKey=process.env.RESEND_API_KEY;
  if(!key||!mailKey)return new Response('Receipt service not configured',{status:503});
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:queue,error}=await db.rpc('karaoke_claim_jobs',{p_service:'receipt',p_limit:25});
+ const {data:queue,error}=await db.rpc('karaoke_claim_jobs',{p_service:'receipt',p_limit:5});
  if(error)return new Response('Receipt queue unavailable',{status:503});
  let sent=0,failed=0;
  for(const job of queue||[]){
