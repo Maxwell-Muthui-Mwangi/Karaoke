@@ -38,3 +38,10 @@ test('No privileged service-role key is referenced by browser components',()=>{
   assert.doesNotMatch(code,/SUPABASE_SERVICE_ROLE_KEY|RESEND_API_KEY|POWER_AUTOMATE_EXCEL_URL/);
  }
 });
+
+test('CMS rejects mixed archive and status updates',()=>{
+ const cms=read('netlify/functions/admin-applications.mjs');
+ assert.ok(cms.includes("body.status!==undefined"));
+ assert.ok(cms.includes("body.archive!==undefined"));
+ assert.ok(cms.includes("Invalid application action"));
+});
