@@ -6,10 +6,10 @@ export default async function handler(){
  const key=process.env.SUPABASE_SERVICE_ROLE_KEY,mailKey=process.env.RESEND_API_KEY;
  if(!key||!mailKey)return new Response('Receipt service not configured',{status:503});
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:queue,error}=await db.from('registration_receipt_outbox').select('registration_id,attempts').in('state',['pending','failed']).order('created_at').limit(25);
+ const {data:queue,error}=await db.from('registration_receipt_outbox').select('registration_id,attempts,last_attempt_at').in('state',['pending','failed']).order('created_at').limit(250);
  if(error)return new Response('Receipt queue unavailable',{status:503});
  let sent=0,failed=0;
- for(const job of queue||[]){
+ for(const job of (queue||[]).filter(job=>!job.last_attempt_at||Date.now()-Date.parse(job.last_attempt_at)>=Math.min(3600000,60000*2**Math.min(Number(job.attempts)||0,6))).slice(0,25)){
   const {data:r,error:lookupError}=await db.from('registrations').select('reference,email,full_name,kind').eq('id',job.registration_id).single();
   if(lookupError||!r){failed++;continue}
   // Never send a real email for clearly labelled integration fixtures.
