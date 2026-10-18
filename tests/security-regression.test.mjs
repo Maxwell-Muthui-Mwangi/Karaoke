@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 test('Netlify routes registration and CMS to server functions',()=>{
  const config=read('netlify.toml');
@@ -26,6 +26,7 @@ test('Workers claim jobs atomically and reject stale completion',()=>{
 test('Excel background sync is disabled',()=>{
  assert.doesNotMatch(read('netlify.toml'),/sync-excel/);
  assert.doesNotMatch(read('.github/workflows/ci.yml'),/sync-excel/);
+ assert.equal(existsSync(new URL('../netlify/functions/sync-excel.mjs',import.meta.url)),false,'Excel worker must not be deployed');
 });
 test('CMS validates session, role and uses atomic update functions',()=>{
  const cms=read('netlify/functions/admin-applications.mjs');
