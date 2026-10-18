@@ -13,8 +13,8 @@ export default async function handler(){
  let completed=0,failed=0;
  for(const job of queue||[]){
   const {data:r,error:readError}=await db.from('registrations').select('reference,kind,full_name,email,phone,affiliation,department,category,stage_name,act_description,status,consent_at,created_at').eq('id',job.registration_id).single();
-  if(readError||!r){failed++;continue}
-  if(r.reference.startsWith('KZU-TEST-')){await db.from('registration_excel_sync').update({state:'skipped',last_error:'Integration fixture',lease_until:null}).eq('registration_id',job.registration_id).eq('state','processing');continue;}
+  if(readError||!r){failed++;await db.from('registration_excel_sync').update({state:'failed',last_error:'Registration lookup failed',lease_until:null}).eq('registration_id',job.registration_id).eq('attempts',job.attempts).eq('state','processing');continue}
+  if(r.reference.startsWith('KZU-TEST-')){await db.from('registration_excel_sync').update({state:'skipped',last_error:'Integration fixture',lease_until:null}).eq('registration_id',job.registration_id).eq('attempts',job.attempts).eq('state','processing');continue;}
   try{
    // Flow MUST upsert on reference (not blindly append), otherwise retries create duplicate Excel rows.
    const response=await fetch(flow,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({registration_reference:r.reference,...r}),signal:AbortSignal.timeout(20000)});
@@ -26,7 +26,7 @@ export default async function handler(){
    completed++;
   }catch(e){
    failed++;console.error('Excel sync delivery failed',r.reference,e?.message);
-   await db.from('registration_excel_sync').update({state:'failed',attempts:job.attempts,last_error:String(e?.message||'Delivery failed').slice(0,200),last_attempt_at:new Date().toISOString(),lease_until:null}).eq('registration_id',job.registration_id).eq('attempts',job.attempts);
+   await db.from('registration_excel_sync').update({state:'failed',attempts:job.attempts,last_error:String(e?.message||'Delivery failed').slice(0,200),last_attempt_at:new Date().toISOString(),lease_until:null}).eq('registration_id',job.registration_id).eq('attempts',job.attempts).eq('state','processing');
   }
  }
  return new Response(JSON.stringify({completed,failed}),{headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
