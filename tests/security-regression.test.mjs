@@ -25,6 +25,7 @@ test('Workers claim jobs atomically and reject stale completion',()=>{
 });
 test('Excel background sync is disabled',()=>{
  assert.doesNotMatch(read('netlify.toml'),/sync-excel/);
+ assert.doesNotMatch(read('.github/workflows/ci.yml'),/sync-excel/);
 });
 test('CMS validates session, role and uses atomic update functions',()=>{
  const cms=read('netlify/functions/admin-applications.mjs');
